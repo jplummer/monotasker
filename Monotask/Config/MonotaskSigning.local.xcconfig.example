@@ -1,0 +1,4 @@
+// Copied to MonotaskSigning.local.xcconfig (gitignored) by `xcodegen generate` if missing.
+// Replace XXXXXXXXXX with your real Team ID (Build Settings → Development Team, or
+// `security find-identity -v -p codesigning` — parentheses on the Apple Development line).
+DEVELOPMENT_TEAM = XXXXXXXXXX

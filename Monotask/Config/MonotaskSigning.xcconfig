@@ -1,0 +1,3 @@
+// Committed wrapper: optional local file supplies DEVELOPMENT_TEAM (not touched by xcodegen).
+// Copy MonotaskSigning.local.xcconfig.example → MonotaskSigning.local.xcconfig (see README).
+#include? "MonotaskSigning.local.xcconfig"

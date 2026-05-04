@@ -1,0 +1,4 @@
+# Optional: project-wide build settings. For Apple Team ID, prefer
+# Monotask/Config/MonotaskSigning.local.xcconfig (see README) so it survives `xcodegen generate`.
+settings:
+  base: {}

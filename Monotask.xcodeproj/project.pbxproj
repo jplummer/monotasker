@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0091E7D8BAB87E6A2F682483 /* EditTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC330D6A1F36308FBB75311 /* EditTaskSheet.swift */; };
 		08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */; };
 		1C5BFC79515F06F559313FB4 /* AddTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */; };
 		1EDD36506EDC098A1C740CE3 /* SelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F346652DC3D832B10E62A54 /* SelectionStore.swift */; };
@@ -51,17 +50,18 @@
 		33DFF2BDB5DCD91C4AC72638 /* TaskFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskFocusView.swift; sourceTree = "<group>"; };
 		48F43B0DC96A9612D88444CE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		523BF9EBE35BE37299CCF566 /* RandomSelectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomSelectionPolicy.swift; sourceTree = "<group>"; };
-		5DC330D6A1F36308FBB75311 /* EditTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskSheet.swift; sourceTree = "<group>"; };
 		6387EC86FE304FE87706B23B /* MockRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemindersService.swift; sourceTree = "<group>"; };
 		70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSheet.swift; sourceTree = "<group>"; };
 		75DA0B54B0B47596455685CB /* Monotask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Monotask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F013528CA9350091CF39245 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		7F73D84A6E06658E5FBF7CE2 /* SelectionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStoreTests.swift; sourceTree = "<group>"; };
+		8FFD8A1586A517CC5B83804F /* MonotaskSigning.local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskSigning.local.xcconfig; sourceTree = "<group>"; };
 		97859C8EE67792A23C73D74F /* UniformRandomTopLevelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRandomTopLevelPolicyTests.swift; sourceTree = "<group>"; };
 		A19DE4889FDD92F317F75BD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitRemindersService.swift; sourceTree = "<group>"; };
 		B91F9D125026E1E93BD923B3 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
 		BAD00AC729E55C092B963F8D /* MonotaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MonotaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskSigning.xcconfig; sourceTree = "<group>"; };
 		C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelTests.swift; sourceTree = "<group>"; };
 		C4A30AB47C462A09439667F8 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionInstructionsView.swift; sourceTree = "<group>"; };
@@ -129,7 +129,6 @@
 			isa = PBXGroup;
 			children = (
 				70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */,
-				5DC330D6A1F36308FBB75311 /* EditTaskSheet.swift */,
 				D84A97EE02769BD10123FB3A /* EmptyListView.swift */,
 				0DC6E3F60397339805700DD4 /* ListSetupView.swift */,
 				D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */,
@@ -167,10 +166,20 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		FAFD28CB9BE15602F6438082 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				8FFD8A1586A517CC5B83804F /* MonotaskSigning.local.xcconfig */,
+				C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		FB5DE07962C14DE49D49D034 /* Monotask */ = {
 			isa = PBXGroup;
 			children = (
 				E8A4815FB48EF48054BA102F /* App */,
+				FAFD28CB9BE15602F6438082 /* Config */,
 				AD7F834620C41F7FD99B3BEF /* Models */,
 				E8DFA5F117CB47711CCBCC92 /* Resources */,
 				7DCF0DC570D4639E6E6F0373 /* Selection */,
@@ -269,7 +278,6 @@
 				3574236E9AFCEAF8958B5B87 /* AppConfig.swift in Sources */,
 				A7F1239C36DE24F766BA26EF /* AppViewModel.swift in Sources */,
 				CB12BAE345F7A2827FE532FE /* DesignColors.swift in Sources */,
-				0091E7D8BAB87E6A2F682483 /* EditTaskSheet.swift in Sources */,
 				7A1E4104C406CEC5AFC0F99B /* EmptyListView.swift in Sources */,
 				08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */,
 				3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */,
@@ -367,6 +375,7 @@
 		};
 		9AF6DD85B4FBCEC8861868BC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -449,6 +458,7 @@
 		};
 		D51CE4F635D8E1BF0A324598 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -469,6 +479,7 @@
 		};
 		D705B5AEF66E071C12FE734A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -486,6 +497,7 @@
 		};
 		D99C744905F41F7A34B88F7A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";

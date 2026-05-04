@@ -1,3 +1,6 @@
+# Local Apple Team ID (see Monotask/Config/MonotaskSigning.local.xcconfig.example)
+Monotask/Config/MonotaskSigning.local.xcconfig
+
 # Xcode
 build/
 DerivedData/

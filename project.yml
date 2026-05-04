@@ -1,9 +1,18 @@
 name: Monotask
+# Optional YAML overrides (e.g. machine-specific). Team ID: use MonotaskSigning.local.xcconfig.
+include:
+  - project.local.yml
 options:
   bundleIdPrefix: com.monotask
   deploymentTarget:
     iOS: '18.0'
   createIntermediateGroups: true
+  # Ensures gitignored MonotaskSigning.local.xcconfig exists so DEVELOPMENT_TEAM can be set (see README).
+  postGenCommand: |
+    if [ ! -f Monotask/Config/MonotaskSigning.local.xcconfig ]; then
+      cp Monotask/Config/MonotaskSigning.local.xcconfig.example Monotask/Config/MonotaskSigning.local.xcconfig
+      echo "Monotask: created Monotask/Config/MonotaskSigning.local.xcconfig — replace XXXXXXXXXX with your Team ID (README → Signing)."
+    fi
 settings:
   base:
     IPHONEOS_DEPLOYMENT_TARGET: '18.0'
@@ -15,6 +24,8 @@ targets:
     # named colors are available in the built app.
     sources:
       - path: Monotask
+        excludes:
+          - Config/MonotaskSigning.local.xcconfig.example
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.monotask.Monotask
@@ -25,6 +36,9 @@ targets:
         TARGETED_DEVICE_FAMILY: '1'
         CURRENT_PROJECT_VERSION: '1'
         MARKETING_VERSION: '1.0.0'
+    configFiles:
+      Debug: Monotask/Config/MonotaskSigning.xcconfig
+      Release: Monotask/Config/MonotaskSigning.xcconfig
     scheme:
       testTargets:
         - MonotaskTests
@@ -40,3 +54,6 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.monotask.MonotaskTests
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: '$(BUILT_PRODUCTS_DIR)/Monotask.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Monotask'
+    configFiles:
+      Debug: Monotask/Config/MonotaskSigning.xcconfig
+      Release: Monotask/Config/MonotaskSigning.xcconfig

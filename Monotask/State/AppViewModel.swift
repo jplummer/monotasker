@@ -23,7 +23,6 @@ final class AppViewModel {
   var pool: [ReminderTask] = []
   var currentTask: ReminderTask?
   var showAddSheet = false
-  var showEditSheet = false
   var showOnlyOneTaskAlert = false
   /// Captured when an add flow starts; drives the surfacing rule (0/1 vs 2+).
   var poolSizeWhenAddOpened = 0
@@ -81,8 +80,15 @@ final class AppViewModel {
   }
 
   func createDefaultList() async {
+    await createReminderList(named: AppConfig.defaultListName)
+  }
+
+  /// Creates a new Reminders list with the given title and switches Monotask to it.
+  func createReminderList(named title: String) async {
+    let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else { return }
     do {
-      let summary = try reminders.createReminderList(title: AppConfig.defaultListName)
+      let summary = try reminders.createReminderList(title: trimmed)
       await applyListChoice(summary)
     } catch {
       userMessage = error.localizedDescription
@@ -104,10 +110,6 @@ final class AppViewModel {
 
   func dismissOnlyOneTaskAlert() {
     showOnlyOneTaskAlert = false
-  }
-
-  func beginEdit() {
-    showEditSheet = true
   }
 
   func reroll() async {
@@ -180,15 +182,10 @@ final class AppViewModel {
       let noteText = (notes ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
       let noteValue = noteText.isEmpty ? nil : noteText
       try reminders.updateReminder(id: task.id, title: trimmed, notes: noteValue)
-      showEditSheet = false
       await loadPoolAndFocus()
     } catch {
       userMessage = error.localizedDescription
     }
-  }
-
-  func cancelEdit() {
-    showEditSheet = false
   }
 
   // MARK: - Private
