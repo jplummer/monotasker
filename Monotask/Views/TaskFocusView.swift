@@ -47,7 +47,7 @@ struct TaskFocusView: View {
             .frame(width: size.width, height: size.height)
             .allowsHitTesting(!isEditing)
             .opacity(isEditing ? 0 : 1)
-            .animation(.easeInOut(duration: 0.15), value: isEditing)
+            .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
         }
 
         VStack(spacing: 8) {
@@ -63,8 +63,8 @@ struct TaskFocusView: View {
           }
         }
         .padding(.bottom, bottomPad + 60)
-        .animation(.easeInOut(duration: 0.22), value: model.pendingUndo != nil)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.22), value: model.pendingUndo != nil)
+        .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
 
         bottomIconStrip
           .padding(.horizontal, 28)
@@ -72,7 +72,7 @@ struct TaskFocusView: View {
           .allowsHitTesting(!isEditing)
           .accessibilityHidden(isEditing)
           .opacity(isEditing ? 0 : 1)
-          .animation(.easeInOut(duration: 0.15), value: isEditing)
+          .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
       }
       .frame(width: size.width, height: size.height)
     }
@@ -352,5 +352,8 @@ private struct Toast: View {
     .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
     .contentShape(Capsule())
     .onTapGesture { action?() }
+    .accessibilityElement(children: .combine)
+    .accessibilityAddTraits(action != nil ? .isButton : [])
+    .accessibilityHint(action != nil ? "Tap to \(actionLabel?.lowercased() ?? "act")" : "")
   }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
   @Environment(AppViewModel.self) private var model
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
     Group {
@@ -29,7 +30,7 @@ struct RootView: View {
         }
       }
     }
-    .animation(.default, value: model.phase)
+    .animation(reduceMotion ? .none : .default, value: model.phase)
     .alert("Notice", isPresented: Binding(
       get: { model.userMessage != nil },
       set: { if !$0 { model.userMessage = nil } }
