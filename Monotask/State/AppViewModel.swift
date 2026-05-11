@@ -48,9 +48,11 @@ final class AppViewModel {
   private var pendingTaskId: String? = nil
   private var undoTimerTask: Task<Void, Never>? = nil
   private var taskAddedToastTask: Task<Void, Never>? = nil
+  private var externalChangeDebounceTask: Task<Void, Never>? = nil
 
   private var observationTask: Task<Void, Never>?
   private let undoDelay: Duration
+  private let externalChangeDebounce: Duration
 
   init(
     reminders: RemindersService,
@@ -58,9 +60,11 @@ final class AppViewModel {
     selectionPolicy: UniformRandomTopLevelPolicy = UniformRandomTopLevelPolicy(),
     analytics: AnalyticsService? = nil,
     undoDelay: Duration = .seconds(4),
+    externalChangeDebounce: Duration = .milliseconds(500),
     skipInitialBootstrap: Bool = false
   ) {
     self.undoDelay = undoDelay
+    self.externalChangeDebounce = externalChangeDebounce
     self.reminders = reminders
     self.selectionStore = selectionStore
     self.selectionPolicy = selectionPolicy
@@ -428,8 +432,15 @@ final class AppViewModel {
   }
 
   private func reloadForExternalChange() async {
-    guard reminders.currentAuthorization() == .fullAccess else { return }
-    guard activeListSummary != nil || selectionStore.selectedListIdentifier != nil else { return }
-    await loadPoolAndFocus()
+    // Debounce: cancel any in-flight reload and restart the timer. This coalesces rapid
+    // EKEventStoreChanged bursts (e.g. iCloud sync) into a single pool fetch.
+    externalChangeDebounceTask?.cancel()
+    externalChangeDebounceTask = Task {
+      try? await Task.sleep(for: externalChangeDebounce)
+      guard !Task.isCancelled else { return }
+      guard reminders.currentAuthorization() == .fullAccess else { return }
+      guard activeListSummary != nil || selectionStore.selectedListIdentifier != nil else { return }
+      await loadPoolAndFocus()
+    }
   }
 }

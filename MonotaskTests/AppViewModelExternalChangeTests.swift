@@ -27,6 +27,7 @@ final class AppViewModelExternalChangeTests: XCTestCase {
       reminders: mock,
       selectionStore: store,
       selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      externalChangeDebounce: .milliseconds(0),
       skipInitialBootstrap: true
     )
     await vm.start()
@@ -51,6 +52,7 @@ final class AppViewModelExternalChangeTests: XCTestCase {
       reminders: mock,
       selectionStore: store,
       selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      externalChangeDebounce: .milliseconds(0),
       skipInitialBootstrap: true
     )
     await vm.start()
@@ -77,6 +79,7 @@ final class AppViewModelExternalChangeTests: XCTestCase {
       reminders: mock,
       selectionStore: store,
       selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      externalChangeDebounce: .milliseconds(0),
       skipInitialBootstrap: true
     )
     // Don't call start() — activeListSummary stays nil
@@ -100,6 +103,7 @@ final class AppViewModelExternalChangeTests: XCTestCase {
       reminders: mock,
       selectionStore: store,
       selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      externalChangeDebounce: .milliseconds(0),
       skipInitialBootstrap: true
     )
     await vm.start()
