@@ -16,7 +16,7 @@ An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder a
 - **Edit (v1)**: **inline** on the post-it (title and notes), not a separate sheet. No supported public URL to open a specific reminder in the system Reminders app ([discussion](https://stackoverflow.com/questions/78688263/how-to-open-a-reminders-app-reminder-item-using)).
 - **Add task**: a control is always available on the main focus path (including empty list flows).
 - **Scaffolding**: xcodegen keeps the Xcode project reproducible; `Monotask.xcodeproj` is checked in for clone-and-open.
-- **Branding before first-run shell**: App **icon**, gradient/post-it **personality**, and overall look should be decided **before** splash and onboarding so first-run screens match the shipped product ([TASKS.md — Branding](TASKS.md#branding--visual-identity)).
+- **Branding before first-run polish**: App **icon**, gradient/post-it **personality**, and overall look should be decided before final onboarding visuals. The onboarding flow and wiring are done with a placeholder visual ([TASKS.md — Branding](TASKS.md#branding--visual-identity)).
 - **Instrumentation**: **Daily-use** analytics wired via **TelemetryDeck** (pseudonymous — hashed per-install UUID, no PII). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`. Onboarding funnel events in ONBOARDING.md share the same pipe when implemented.
 
 ## First-run onboarding (planned)

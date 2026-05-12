@@ -25,7 +25,7 @@ Snapshot of the repo **today** so PLAN/TASKS stay honest. Update this section wh
 - **Per-list reminder memory**: `SelectionStore` persists last focused reminder for every list in a 50-entry LRU map. Switching back to a prior list restores focus. One-time migration from legacy single-key format on first launch after upgrade.
 - **Daily-use instrumentation**: TelemetryDeck wired via `AnalyticsService` protocol. Pseudonymous (SHA-256 hashed per-install UUID). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`.
 - **Accessibility — Reduce Motion**: All animations in `RootView` and `TaskFocusView` gate on `accessibilityReduceMotion`. Card tilt off when reduce motion is on (`PostItCard`). Undo/add toasts VoiceOver-accessible with button trait and hint.
-- **Tests**: 61 tests across 9 groups covering bootstrap phases, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
+- **Tests**: 82 tests across 10 groups covering bootstrap phases, onboarding/permission flow, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
 - **xcodegen**: `project.yml`, signing xcconfig pattern, README workflow.
 
 ### Partial (implemented but thin or needs a dedicated pass)
@@ -48,7 +48,7 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 
 - **Branding & visual identity** — Direction for **app icon**, gradient/post-it **personality**, and overall tone **before** splash and onboarding so first-run screens match the product (good candidate for a **competitive multi-agent** exploration: parallel moodboards / icon directions, then converge).
 - **Splash / launch shell**: Not in the main app path yet.
-- **First-run onboarding** (welcome + education **before** system prompt): Spec in [ONBOARDING.md](ONBOARDING.md); main branch still starts `bootstrap` without those screens.
+- **First-run onboarding** (splash visual + final polish): Flow and wiring are done. Placeholder visual in `OnboardingView`. Brand artwork and final copy tweaks pending identity work.
 - **Performance pass** (intentional optimization pass): EKEventStoreChanged debounce (500ms) shipped. Rendering audit (shadows, trig) deferred until Instruments trace on device.
 - **App icon in Assets**: `project.yml` may still omit a filled **App Icon** set until branding is decided.
 - **App Store artifacts**: Screenshots, listing copy, privacy answers — **last**, after UI and branding stabilize ([App Store and marketing assets](#app-store-and-marketing-assets)).
@@ -64,7 +64,7 @@ Prioritize **identity and observability**, then **inclusive UX**, then **first-r
 2. ~~**Test coverage pass**~~ — **Done.** 61 tests; all passing. See [Test coverage pass](#test-coverage-pass-).
 3. ~~**Daily-use instrumentation**~~ — **Done.** TelemetryDeck, pseudonymous, 9 core events. See [Daily-use instrumentation](#daily-use-instrumentation).
 4. ~~**Accessibility pass (core)**~~ — **Done.** Reduce Motion on all animations, VoiceOver labels and traits on all controls and toasts, semantic fonts throughout. Remaining: full VoiceOver traversal order audit + large-text layout (ship-ready polish pass).
-5. **Splash + first-run onboarding** — After branding; short launch shell; education per [ONBOARDING.md](ONBOARDING.md); defer `bootstrap` / `start()` until after onboarding when applicable so the Reminders prompt is not the first screen.
+5. ~~**First-run onboarding (flow and wiring)**~~ — **Done.** Value prop screen, "Connect my Reminders" CTA, permission gate, denied/write-only recovery path, analytics hooks. Placeholder visual in place. **Splash visual and final polish wait on branding.**
 6. **Performance pass** — EKEventStoreChanged debounce done. Remaining: profile focus view and post-it rendering on device with Instruments; trim layout/animation cost if hot (see [Performance pass](#performance-pass)).
 7. **Ship-ready polish** — Error UX improvements, scene lifecycle (background / Settings / Reminders edits), small-phone and dark/light passes, full VoiceOver traversal order + large-text layout.
 8. **View refinement** — Typography, haptics, tokens ([View and behavior refinement](#view-and-behavior-refinement)); ongoing.
