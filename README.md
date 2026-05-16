@@ -68,3 +68,7 @@ Then relaunch the app. On a real device, delete and reinstall the app to reset p
 
 - **[docs/PLAN.md](docs/PLAN.md)** — architecture, state machine, and locked decisions.
 - **[docs/TASKS.md](docs/TASKS.md)** — working task list: ship-ready polish, per-view refinement, and deferred roadmap (checklist).
+
+## License
+
+[PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0) — free for noncommercial use.
