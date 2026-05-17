@@ -2,46 +2,58 @@ import SwiftUI
 
 struct OnboardingView: View {
   @Environment(AppViewModel.self) private var model
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  @State private var contentVisible = false
+  @FocusState private var dummyFocus: PostItEditFocus?
 
   var body: some View {
-    VStack(spacing: 0) {
-      Spacer()
+    GeometryReader { proxy in
+      let side = max(200, min(proxy.size.width - 48, proxy.size.height))
+      let upShift = proxy.size.height * PostItCardLayout.verticalUpShiftRatio
 
-      // Placeholder visual — brand artwork drops in here after identity is settled.
-      Image(systemName: "checklist")
-        .font(.system(size: 72, weight: .light))
-        .foregroundStyle(.primary.opacity(0.8))
-        .padding(.bottom, 48)
+      ZStack {
+        PostItCard(
+          squareSide: side,
+          isEditing: false,
+          displayTitle: "Select a Reminders list",
+          displayNotes: "Monotask gives you one task at a time, from the Reminders list of your choice",
+          editTitle: .constant(""),
+          editNotes: .constant(""),
+          focus: $dummyFocus,
+          stackedCardsCount: 3,
+          colorIndex: 0,
+          frontCardRotation: reduceMotion ? 0 : 2.0,
+          checkboxLeadingReserve: 32
+        )
 
-      VStack(spacing: 12) {
-        Text("One task at a time, from the Reminders you already have.")
-          .font(.title2.weight(.semibold))
-          .multilineTextAlignment(.center)
-
-        Text("Monotask reads your Reminders to show you one task at a time.")
-          .font(.body)
-          .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
+        // Completion checkbox — sole CTA. Positioned at upper-left of the front card,
+        // matching the layout logic in TaskFocusView's postItFloatingChrome.
+        Button {
+          Task { await model.connectReminders() }
+        } label: {
+          Image(systemName: "circle")
+            .imageScale(.large)
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.primary)
+        .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+        .accessibilityLabel("Allow Reminders access")
+        .position(
+          x: proxy.size.width / 2 - side / 2 + 6 + 22,
+          y: proxy.size.height / 2 - upShift - side / 2 + 40
+        )
+        .opacity(contentVisible ? 1 : 0)
       }
-      .padding(.horizontal, 32)
-
-      Spacer()
-
-      Button {
-        Task { await model.connectReminders() }
-      } label: {
-        Text("Connect my Reminders")
-          .font(.body.weight(.semibold))
-          .frame(maxWidth: .infinity)
-          .padding(.vertical, 16)
-      }
-      .buttonStyle(.borderedProminent)
-      .padding(.horizontal, 32)
-      .padding(.bottom, 48)
+      .opacity(contentVisible ? 1 : 0)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .onAppear {
       model.recordOnboardingImpression()
+      let animation: Animation? = reduceMotion ? nil : .easeIn(duration: 0.25)
+      withAnimation(animation) { contentVisible = true }
     }
   }
 }
