@@ -392,7 +392,12 @@ final class AppViewModel {
   private func bootstrap() async {
     phase = .bootstrapping
     userMessage = nil
-    switch reminders.currentAuthorization() {
+    // Run the auth check concurrently with a minimum display so the branded
+    // bootstrap card is visible for at least 400 ms on every launch.
+    async let minDisplay: Void = Task.sleep(for: .milliseconds(400))
+    let authorization = reminders.currentAuthorization()
+    try? await minDisplay
+    switch authorization {
     case .undetermined, .denied, .writeOnly:
       phase = .onboarding
     case .fullAccess:
@@ -404,6 +409,10 @@ final class AppViewModel {
     if let storedId = selectionStore.selectedListIdentifier,
        let summary = reminders.calendar(withIdentifier: storedId) {
       activeListSummary = summary
+      if fromOnboarding {
+        analytics?.record("onboarding.list_auto_selected")
+        showAutoSelectedListToastBriefly()
+      }
       await loadPoolAndFocus()
       if fromOnboarding && (phase == .focused || phase == .emptyList) {
         analytics?.record("onboarding.complete")

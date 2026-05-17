@@ -17,7 +17,7 @@ struct OnboardingView: View {
           squareSide: side,
           isEditing: false,
           displayTitle: "Select a Reminders list",
-          displayNotes: "Monotask gives you one task at a time, from the Reminders list of your choice",
+          displayNotes: "Monotask gives you one task at a time. Check off this card and choose a Reminders list of your choice.",
           editTitle: .constant(""),
           editNotes: .constant(""),
           focus: $dummyFocus,
@@ -32,7 +32,7 @@ struct OnboardingView: View {
         Button {
           Task { await model.connectReminders() }
         } label: {
-          Image(systemName: "circle")
+          Image(systemName: "square")
             .imageScale(.large)
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
