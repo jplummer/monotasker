@@ -40,7 +40,7 @@ struct OnboardingView: View {
           editTitle: .constant(""),
           editNotes: .constant(""),
           focus: $dummyFocus,
-          stackedCardsCount: 3,
+          stackedCardsCount: 1,
           colorIndex: 0,
           frontCardRotation: angle,
           checkboxLeadingReserve: 32

@@ -10,8 +10,7 @@ struct EmptyListView: View {
   @State private var isSaving = false
   @State private var frontCardAngle: Double = 1.5
   @FocusState private var editFocus: PostItEditFocus?
-  /// Keyboard-unaffected card side length, updated from a background geometry reader.
-  @State private var cardSide: CGFloat = 0
+  @State private var keyboardHeight: CGFloat = 0
 
   private let horizontalPadding: CGFloat = 24
   /// Space reserved so the post-it does not cover the bottom chrome area (points).
@@ -22,8 +21,9 @@ struct EmptyListView: View {
       let size = proxy.size
       let widthBudget = size.width - horizontalPadding * 2
       let heightBudget = size.height - bottomChromeReserve
-      let side = cardSide > 0 ? cardSide : max(200, min(widthBudget, heightBudget))
-      let upShift = size.height * PostItCardLayout.verticalUpShiftRatio
+      let side = max(200, min(widthBudget, heightBudget))
+      let cardRatio = PostItCardLayout.cardRatio(keyboardHeight: keyboardHeight, containerHeight: size.height)
+      let upShift = size.height * cardRatio
       let cardCY = size.height / 2 - upShift
 
       let angle = reduceMotion ? 0.0 : frontCardAngle
@@ -41,7 +41,8 @@ struct EmptyListView: View {
           stackedCardsCount: 1,
           colorIndex: 0,
           frontCardRotation: angle,
-          titlePlaceholder: "Add a task"
+          titlePlaceholder: "Add a task",
+          verticalUpShiftRatio: cardRatio
         )
 
         // Static placeholder chrome — pencil on the card, plus below
@@ -79,13 +80,8 @@ struct EmptyListView: View {
       .frame(width: size.width, height: size.height)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(
-      Color.clear
-        .ignoresSafeArea(.keyboard)
-        .onGeometryChange(for: CGFloat.self) { proxy in
-          max(200, min(proxy.size.width - horizontalPadding * 2, proxy.size.height - bottomChromeReserve))
-        } action: { cardSide = $0 }
-    )
+    .ignoresSafeArea(.keyboard)
+    .onKeyboardHeightChange { keyboardHeight = $0 }
     .toolbar {
       ToolbarItem(placement: .principal) {
         if !isEditing {

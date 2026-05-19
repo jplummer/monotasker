@@ -18,6 +18,27 @@ enum PostItCardLayout {
       y: cy + lx * sin(r) + ly * cos(r)
     )
   }
+
+  /// Vertical shift ratio that centers the card in the space above the keyboard.
+  /// When keyboard is hidden returns the natural ratio; otherwise places the card
+  /// equidistant between the nav bar and the keyboard top edge.
+  static func cardRatio(keyboardHeight: CGFloat, containerHeight: CGFloat) -> CGFloat {
+    guard keyboardHeight > 0, containerHeight > 0 else { return verticalUpShiftRatio }
+    return min(0.40, keyboardHeight / (2 * containerHeight))
+  }
+}
+
+extension View {
+  /// Calls `action` with the keyboard height (0 when hidden) whenever the keyboard frame changes,
+  /// animated to match the keyboard's own transition.
+  func onKeyboardHeightChange(_ action: @escaping (CGFloat) -> Void) -> some View {
+    onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)) { n in
+      guard let frame = n.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+      let duration = n.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.25
+      let h = max(0, UIScreen.main.bounds.height - frame.minY)
+      withAnimation(.easeInOut(duration: duration)) { action(h) }
+    }
+  }
 }
 
 private struct BackgroundCard: Identifiable {
@@ -73,7 +94,6 @@ struct PostItCard: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
               .fill(card.color)
               .frame(width: squareSide, height: squareSide)
-              .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
               .rotationEffect(.degrees(reduceMotion ? 0 : card.angle))
               .offset(
                 x: reduceMotion ? 0 : card.offset.width,

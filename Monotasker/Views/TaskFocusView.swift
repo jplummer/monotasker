@@ -16,8 +16,7 @@ struct TaskFocusView: View {
   @State private var addCardAngle: Double = 1.0
 
   @State private var frontCardAngle: Double = 0
-  /// Keyboard-unaffected card side length, updated from a background geometry reader.
-  @State private var cardSide: CGFloat = 0
+  @State private var keyboardHeight: CGFloat = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -28,8 +27,10 @@ struct TaskFocusView: View {
   var body: some View {
     GeometryReader { proxy in
       let size = proxy.size
-      let maxSide = cardSide > 0 ? cardSide : squareSide(maxHeight: size.height, maxWidth: size.width)
+      let maxSide = squareSide(maxHeight: size.height, maxWidth: size.width)
+      let cardRatio = PostItCardLayout.cardRatio(keyboardHeight: keyboardHeight, containerHeight: size.height)
       let postIt = postItGeometry(container: size, squareSide: maxSide)
+      let currentColorIdx = model.pool.firstIndex(where: { $0.id == task.id }) ?? 0
 
       let bottomPad = max(proxy.safeAreaInsets.bottom, 12)
 
@@ -45,10 +46,11 @@ struct TaskFocusView: View {
               editNotes: $addDraftNotes,
               focus: $addFocus,
               stackedCardsCount: model.pool.count,
-              colorIndex: model.pool.count % DesignColors.postItColorCount,
+              colorIndex: (currentColorIdx + 1) % DesignColors.postItColorCount,
               frontCardRotation: addCardAngle,
               checkboxLeadingReserve: 32,
-              titlePlaceholder: "Add a task"
+              titlePlaceholder: "Add a task",
+              verticalUpShiftRatio: cardRatio
             )
           } else {
             PostItCard(
@@ -62,7 +64,8 @@ struct TaskFocusView: View {
               stackedCardsCount: model.pool.count,
               colorIndex: model.pool.firstIndex(where: { $0.id == task.id }) ?? 0,
               frontCardRotation: frontCardAngle,
-              checkboxLeadingReserve: 32
+              checkboxLeadingReserve: 32,
+              verticalUpShiftRatio: cardRatio
             )
 
             postItFloatingChrome(postIt: postIt)
@@ -86,7 +89,7 @@ struct TaskFocusView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
             if model.showAutoSelectedListToast {
-              Toast(message: "Using your Monotasker list", actionLabel: "Change") {
+              Toast(message: "We found your Monotasker list!", actionLabel: "Change") {
                 model.openListPickerFromToast()
               }
               .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -110,13 +113,8 @@ struct TaskFocusView: View {
       .frame(width: size.width, height: size.height)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(
-      Color.clear
-        .ignoresSafeArea(.keyboard)
-        .onGeometryChange(for: CGFloat.self) { proxy in
-          max(200, min(proxy.size.width - horizontalPadding * 2, proxy.size.height - bottomChromeReserve))
-        } action: { cardSide = $0 }
-    )
+    .ignoresSafeArea(.keyboard)
+    .onKeyboardHeightChange { keyboardHeight = $0 }
     .toolbar {
       ToolbarItem(placement: .principal) {
         if !isEditing && !isAdding {

@@ -8,8 +8,6 @@ struct RootView: View {
   // run in a clean SwiftUI animation context — even when UIKit (e.g. the system
   // permissions dialog) is mid-dismissal and would otherwise suppress animations.
   @State private var displayedPhase: AppPhase = .bootstrapping
-  @State private var bootstrappingAngle: Double = Double.random(in: -2.5...2.5)
-  @FocusState private var dummyFocus: PostItEditFocus?
 
   var body: some View {
     ZStack {
@@ -86,10 +84,6 @@ struct RootView: View {
   @ViewBuilder
   private var overlayLayer: some View {
     switch displayedPhase {
-    case .bootstrapping:
-      bootstrappingCard
-        .transition(.opacity.animation(reduceMotion ? .none : .easeOut(duration: 0.25)))
-
     case .onboarding:
       OnboardingView()
 
@@ -101,31 +95,6 @@ struct RootView: View {
       // No overlay — use EmptyView so hit testing passes through to the layer below.
       EmptyView()
     }
-  }
-
-  private var bootstrappingCard: some View {
-    GeometryReader { proxy in
-      let size = proxy.size
-      let side = max(200, min(
-        size.width - 24 * 2,
-        size.height - 72
-      ))
-      let dummyTitle = Binding.constant("")
-      let dummyNotes = Binding.constant("")
-      PostItCard(
-        squareSide: side,
-        isEditing: false,
-        displayTitle: "",
-        displayNotes: nil,
-        editTitle: dummyTitle,
-        editNotes: dummyNotes,
-        focus: $dummyFocus,
-        stackedCardsCount: 1,
-        colorIndex: 0,
-        frontCardRotation: bootstrappingAngle
-      )
-    }
-    .allowsHitTesting(false)
   }
 
   // MARK: - Helpers
