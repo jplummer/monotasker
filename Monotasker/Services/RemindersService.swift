@@ -7,10 +7,21 @@ enum RemindersAuthorization: Equatable, Sendable {
   case fullAccess
 }
 
-enum RemindersServiceError: Error, Equatable, Sendable {
+enum RemindersServiceError: Error, Equatable, Sendable, LocalizedError {
   case noWritableSource
   case reminderNotFound
   case calendarNotFound
+
+  var errorDescription: String? {
+    switch self {
+    case .noWritableSource:
+      return "Couldn't create a Reminders list. Make sure you have an iCloud or Exchange account set up in Settings."
+    case .reminderNotFound:
+      return "That task no longer exists — it may have been deleted in the Reminders app."
+    case .calendarNotFound:
+      return "The Reminders list couldn't be found. It may have been deleted."
+    }
+  }
 }
 
 /// Stable Reminders list identity for UI and persistence (`EKCalendar.calendarIdentifier`).

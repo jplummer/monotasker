@@ -279,6 +279,9 @@ final class AppViewModel {
       let updated = ReminderTask(id: task.id, title: trimmed, notes: noteValue, isCompleted: task.isCompleted)
       currentTask = updated
       pool = pool.map { $0.id == task.id ? updated : $0 }
+    } catch RemindersServiceError.reminderNotFound {
+      // Deleted externally between edit start and save — reload silently.
+      await loadPoolAndFocus()
     } catch {
       userMessage = error.localizedDescription
     }
@@ -325,6 +328,9 @@ final class AppViewModel {
       case .completion: try reminders.completeReminder(id: task.id)
       }
       await loadPoolAndFocus()
+    } catch RemindersServiceError.reminderNotFound {
+      // Task was already gone externally — treat as success and reload.
+      await loadPoolAndFocus()
     } catch {
       analytics?.record("error.critical", parameters: ["site": "executeImmediately"])
       userMessage = error.localizedDescription
@@ -358,6 +364,9 @@ final class AppViewModel {
       case .deletion(let task): try reminders.deleteReminder(id: task.id)
       case .completion(let task): try reminders.completeReminder(id: task.id)
       }
+    } catch RemindersServiceError.reminderNotFound {
+      // Already gone externally — the pool reload after this call will catch up.
+      return
     } catch {
       analytics?.record("error.critical", parameters: ["site": "sendToEventKit"])
       userMessage = error.localizedDescription
@@ -387,7 +396,6 @@ final class AppViewModel {
       } catch {
         analytics?.record("permission.outcome", parameters: ["result": "error"])
         phase = .permissionDenied
-        userMessage = error.localizedDescription
       }
     case .fullAccess:
       await resolveListAndLoad(fromOnboarding: true)
@@ -513,7 +521,6 @@ final class AppViewModel {
       }
     } catch {
       analytics?.record("error.critical", parameters: ["site": "loadPoolAndFocus"])
-      userMessage = error.localizedDescription
       showListPickerSheet = true
       phase = .listSetup
     }
