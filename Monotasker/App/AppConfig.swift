@@ -11,4 +11,6 @@ enum AppConfig {
   }
 
   static var defaultListName: String { appName }
+
+  static let telemetryDeckAppID = "42A77D2A-370F-4941-9D01-EC105B518BCE"
 }

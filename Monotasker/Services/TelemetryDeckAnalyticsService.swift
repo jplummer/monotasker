@@ -2,8 +2,6 @@ import Foundation
 import CryptoKit
 import TelemetryDeck
 
-/// Sends events to TelemetryDeck. The stable per-install UUID is SHA-256 hashed before
-/// being passed to the SDK so TelemetryDeck never receives the raw identifier.
 final class TelemetryDeckAnalyticsService: AnalyticsService, @unchecked Sendable {
   private static let installIdKey = "monotask.installId"
 
@@ -16,8 +14,6 @@ final class TelemetryDeckAnalyticsService: AnalyticsService, @unchecked Sendable
   func record(_ event: String, parameters: [String: String] = [:]) {
     TelemetryDeck.signal(event, parameters: parameters)
   }
-
-  // MARK: - Private
 
   private func hashedInstallId() -> String {
     let raw = installId()

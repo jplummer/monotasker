@@ -29,7 +29,7 @@ final class AppViewModel {
   private let reminders: RemindersService
   private let selectionStore: SelectionStore
   private var selectionPolicy: UniformRandomTopLevelPolicy
-  private let analytics: AnalyticsService?
+  private var analytics: AnalyticsService?
 
   var phase: AppPhase = .bootstrapping
   var userMessage: String?
@@ -77,15 +77,15 @@ final class AppViewModel {
     self.selectionStore = selectionStore
     self.selectionPolicy = selectionPolicy
     self.analytics = analytics
-    observationTask = Task { @MainActor [weak self] in
-      guard let self else { return }
-      for await _ in self.reminders.eventStoreChanges() {
-        await self.reloadForExternalChange()
-      }
-    }
     if !skipInitialBootstrap {
       Task { await self.start() }
     }
+  }
+
+  /// Called from RootView's .task modifier after the first frame renders.
+  /// Deferring TelemetryDeck init until here keeps it off the cold-launch critical path.
+  func configureAnalytics(_ service: AnalyticsService) {
+    analytics = service
   }
 
   /// Entry point for previews and tests when `skipInitialBootstrap` was `true`.
@@ -400,9 +400,29 @@ final class AppViewModel {
   // MARK: - Private
 
   private func bootstrap() async {
+    let bt0 = Date()
+    print("[TIMING] bootstrap() start: +\(String(format: "%.3f", bt0.timeIntervalSince(MonotaskerTiming.t0)))s")
     phase = .bootstrapping
     userMessage = nil
+
+    // Fast path: no stored list means the user has never completed onboarding.
+    // Skip EKEventStore.authorizationStatus() — even this class method appears to wake
+    // the Calendar/Reminders daemon via XPC, causing a multi-second cold-start delay
+    // on first install when the daemon is not yet running.
+    guard selectionStore.selectedListIdentifier != nil else {
+      phase = .onboarding
+      print("[TIMING] bootstrap() → .onboarding (fast path): +\(String(format: "%.3f", Date().timeIntervalSince(MonotaskerTiming.t0)))s")
+      // Pre-warm the daemon in the background while the user reads the onboarding card.
+      // By the time they tap the checkbox, the XPC connection is established and the
+      // system permission dialog appears without the cold-start delay.
+      let svc = reminders
+      Task.detached(priority: .background) { _ = svc.currentAuthorization() }
+      return
+    }
+
+    print("[TIMING] bootstrap() calling authorizationStatus: +\(String(format: "%.3f", Date().timeIntervalSince(MonotaskerTiming.t0)))s")
     let authorization = reminders.currentAuthorization()
+    print("[TIMING] bootstrap() authorizationStatus done (\(authorization)): +\(String(format: "%.3f", Date().timeIntervalSince(MonotaskerTiming.t0)))s")
     switch authorization {
     case .undetermined, .denied, .writeOnly:
       phase = .onboarding
@@ -412,7 +432,18 @@ final class AppViewModel {
     }
   }
 
+  private func startEventStoreObservationIfNeeded() {
+    guard observationTask == nil else { return }
+    observationTask = Task { @MainActor [weak self] in
+      guard let self else { return }
+      for await _ in self.reminders.eventStoreChanges() {
+        await self.reloadForExternalChange()
+      }
+    }
+  }
+
   private func resolveListAndLoad(fromOnboarding: Bool = false) async {
+    startEventStoreObservationIfNeeded()
     if let storedId = selectionStore.selectedListIdentifier,
        let summary = reminders.calendar(withIdentifier: storedId) {
       activeListSummary = summary

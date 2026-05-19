@@ -36,6 +36,7 @@
 		AE5F8902F7AE9CE665C2C780 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09D70A3DB6BE2E0893BBACC /* AppViewModel.swift */; };
 		AEF214316BDC2C43C83E24A2 /* SelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ED2413B4D75F8088F34D9C /* SelectionStore.swift */; };
 		AF5B82494954A6F007387A24 /* ListPickerDropdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9DF94F47CD703B1F0017EE /* ListPickerDropdownView.swift */; };
+		BDEEA1A484FE0BDBDA2B48CA /* MonotaskerTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC1669EA600047699830695 /* MonotaskerTiming.swift */; };
 		C0C8F860CADD66111C7D7D36 /* AppViewModelListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A20E782EC237B870D8E261E /* AppViewModelListTests.swift */; };
 		C1152F640685643DB9F11F77 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9606C97765BB0127A6F8B688 /* RootView.swift */; };
 		C74C41691A7A1AC1370F469D /* TaskFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C803C26B1EE9E939F4B4B58 /* TaskFocusView.swift */; };
@@ -71,6 +72,7 @@
 		3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelRerollTests.swift; sourceTree = "<group>"; };
 		32A0D47280D66A3A139EA052 /* MockAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalyticsService.swift; sourceTree = "<group>"; };
 		4BA560826E7A81BAE1313A62 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
+		4DC1669EA600047699830695 /* MonotaskerTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskerTiming.swift; sourceTree = "<group>"; };
 		513CD22864E48476D24B4BBC /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		5AD1BDA6DBDB0191A2409C29 /* AppViewModelSectionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSectionsTests.swift; sourceTree = "<group>"; };
 		61D7A7BC89DD274FA9680009 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				1B34B6C56703390D1AE1B3E1 /* Info.plist */,
 				1AF731C766BBAD715D8D8C1A /* LaunchScreen.storyboard */,
 				7B81E6F3DEB8E574EB6F2848 /* MonotaskerApp.swift */,
+				4DC1669EA600047699830695 /* MonotaskerTiming.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 				F61FAEAD98293E3BAF47D907 /* MockAnalyticsService.swift in Sources */,
 				9E4EA8DA2DDE3F0319759D5E /* MockRemindersService.swift in Sources */,
 				AC93E84BDF95745E3238F218 /* MonotaskerApp.swift in Sources */,
+				BDEEA1A484FE0BDBDA2B48CA /* MonotaskerTiming.swift in Sources */,
 				AB74B2461E2290C773A90934 /* OnboardingView.swift in Sources */,
 				8334202A5160345E5A28D4C9 /* PermissionInstructionsView.swift in Sources */,
 				A8DDA4C0C97FF3207686670B /* PostItCard.swift in Sources */,
