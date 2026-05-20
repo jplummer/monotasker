@@ -75,13 +75,27 @@ final class AppViewModelBootstrapTests: XCTestCase {
     XCTAssertEqual(vm.currentTask?.id, "r-1")
   }
 
-  func testNoPersistedListNoNameMatchGoesToListSetup() async {
+  func testNoPersistedListGoesToOnboarding() async {
+    // No stored list → fast path straight to onboarding (skips EKEventStore access).
     let mock = MockRemindersService(
       authorization: .fullAccess,
       calendars: [ReminderCalendarSummary(id: "cal-1", title: "Work")],
       reminders: ["cal-1": []]
     )
     let store = makeStore()
+    let vm = makeVM(mock: mock, store: store)
+    await vm.start()
+    XCTAssertEqual(vm.phase, .onboarding)
+  }
+
+  func testStaleListIdNoNameMatchGoesToListSetup() async {
+    // Stored list ID exists but the calendar is gone and no name match → list picker.
+    let mock = MockRemindersService(
+      authorization: .fullAccess,
+      calendars: [ReminderCalendarSummary(id: "cal-real", title: "Work")],
+      reminders: ["cal-real": []]
+    )
+    let store = makeStore(listId: "cal-stale")
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
     XCTAssertEqual(vm.phase, .listSetup)
@@ -130,10 +144,11 @@ final class AppViewModelBootstrapTests: XCTestCase {
 
   // MARK: - Error path
 
-  func testFetchThrowingDuringBootstrapSetsUserMessageAndGoesToListSetup() async {
+  func testFetchThrowingDuringBootstrapGoesToListSetup() async {
     // Pass a non-empty reminders dict that omits "cal-1" so the mock doesn't
     // auto-populate an empty array for it. fetchIncompleteTopLevel then throws
-    // calendarNotFound, which should set userMessage and route to .listSetup.
+    // calendarNotFound, which should route to .listSetup (no userMessage — the
+    // redirect is the recovery, so the alert is suppressed).
     let mock = MockRemindersService(
       authorization: .fullAccess,
       calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotasker")],
@@ -143,7 +158,7 @@ final class AppViewModelBootstrapTests: XCTestCase {
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
     XCTAssertEqual(vm.phase, .listSetup)
-    XCTAssertNotNil(vm.userMessage)
+    XCTAssertNil(vm.userMessage)
   }
 
   // MARK: - refreshAfterSettings

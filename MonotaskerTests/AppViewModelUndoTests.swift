@@ -208,7 +208,9 @@ final class AppViewModelUndoTests: XCTestCase {
 
   // MARK: - Error after timer fires
 
-  func testCompleteThrowsAfterTimerFiresSetsUserMessage() async throws {
+  func testCompleteReminderAlreadyGoneAfterTimerFiresIsHandledSilently() async throws {
+    // If the task was externally deleted during the undo window, the deferred
+    // completeReminder gets reminderNotFound — treated as a no-op, no alert.
     let r1 = ReminderTask(id: "r-1", title: "A", isCompleted: false)
     let r2 = ReminderTask(id: "r-2", title: "B", isCompleted: false)
     let r3 = ReminderTask(id: "r-3", title: "C", isCompleted: false)
@@ -220,15 +222,15 @@ final class AppViewModelUndoTests: XCTestCase {
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
 
-    await vm.beginComplete() // r-1 enters undo window
-    // Delete r-1 directly from mock so completeReminder will throw when the timer fires
+    await vm.beginComplete()
     try mock.deleteReminder(id: "r-1")
     try await Task.sleep(for: .milliseconds(200))
 
-    XCTAssertNotNil(vm.userMessage, "error from completeReminder must surface in userMessage")
+    XCTAssertNil(vm.userMessage)
   }
 
-  func testDeleteThrowsAfterTimerFiresSetsUserMessage() async throws {
+  func testDeleteReminderAlreadyGoneAfterTimerFiresIsHandledSilently() async throws {
+    // Same as above for the delete path.
     let r1 = ReminderTask(id: "r-1", title: "A", isCompleted: false)
     let r2 = ReminderTask(id: "r-2", title: "B", isCompleted: false)
     let r3 = ReminderTask(id: "r-3", title: "C", isCompleted: false)
@@ -240,12 +242,11 @@ final class AppViewModelUndoTests: XCTestCase {
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
 
-    await vm.beginDelete() // r-1 enters undo window
-    // Delete r-1 directly from mock so deleteReminder will throw when the timer fires
+    await vm.beginDelete()
     try mock.deleteReminder(id: "r-1")
     try await Task.sleep(for: .milliseconds(200))
 
-    XCTAssertNotNil(vm.userMessage, "error from deleteReminder must surface in userMessage")
+    XCTAssertNil(vm.userMessage)
   }
 
   // MARK: - Pending task filtered during external change reload

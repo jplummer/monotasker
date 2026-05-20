@@ -74,7 +74,9 @@ final class AppViewModelEditTests: XCTestCase {
     XCTAssertEqual(stored.first?.title, "Original")
   }
 
-  func testConfirmEditThrowingSetsUserMessage() async {
+  func testConfirmEditReminderNotFoundReloadsPoolSilently() async {
+    // If the task was deleted externally between edit-open and save, the save
+    // silently reloads the pool rather than surfacing an alert.
     let task = ReminderTask(id: "r-1", title: "Task", notes: nil, isCompleted: false)
     let suite = "test.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: suite)!
@@ -82,7 +84,6 @@ final class AppViewModelEditTests: XCTestCase {
     let store = SelectionStore(defaults: defaults)
     store.selectedListIdentifier = "cal-1"
     store.setReminderID(task.id, forList: "cal-1")
-    // Pass a mock with no reminders entry for r-1 so updateReminder throws
     let mock = MockRemindersService(
       calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotasker")],
       reminders: ["cal-1": [task]]
@@ -94,11 +95,11 @@ final class AppViewModelEditTests: XCTestCase {
       skipInitialBootstrap: true
     )
     await vm.start()
-    // Delete the task from mock so updateReminder will throw reminderNotFound
     try! mock.deleteReminder(id: "r-1")
 
     await vm.confirmEdit(title: "New", notes: nil)
 
-    XCTAssertNotNil(vm.userMessage)
+    XCTAssertNil(vm.userMessage)
+    XCTAssertEqual(vm.phase, .emptyList)
   }
 }

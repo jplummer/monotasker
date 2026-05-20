@@ -11,7 +11,7 @@ Links: [README](../README.md)
 ### Ship-ready polish
 
 - [ ] **Error UX**: Replace or supplement generic `userMessage` alerts with inline / recoverable messaging where it helps.
-- [ ] **Scene lifecycle**: Confirm behavior returning from background / Settings (permission changes, list edits in Reminders).
+- [ ] **Scene lifecycle**: Confirm behavior returning from background / Settings (permission changes, list edits in Reminders). `sceneDidBecomeActive` is wired; see [manual test cases](#scene-lifecycle-manual-tests) below.
 - [ ] **Device matrix**: Small phone, large phone, dark/light; toolbar, sheet detents, gradient safe areas, bottom strip + floating chrome.
 - [ ] **Full VoiceOver traversal order audit** + large-text layout.
 - [ ] **PermissionInstructionsView copy**: Tighten for full vs write-only access distinction; consider bullet list mirroring Settings path.
@@ -59,9 +59,62 @@ Consider replacing or supplementing the bottom icon strip and floating chrome wi
 
 ---
 
+## Manual test cases
+
+### Scene lifecycle manual tests
+
+These require a physical device (or simulator with real permission flow). Each test is listed with setup, steps, and expected result. Run after any change to `AppViewModel`, `MonotaskerApp`, or EventKit interaction.
+
+**T1 — Grant permission from Settings (was permissionDenied)**
+1. Fresh install or revoke Reminders access in Settings → Monotasker → Reminders = None.
+2. Launch Monotasker. Tap the onboarding checkbox → deny permission when prompted.
+3. Confirm app shows the ghost-card "Reminders access needed" screen.
+4. Without killing the app, open Settings → Monotasker → Reminders → set to Full Access.
+5. Return to Monotasker.
+- **Expect**: App detects the change, runs bootstrap, transitions to the focused task screen (or list picker if no list resolved).
+
+**T2 — Revoke permission while app is in use**
+1. Launch Monotasker with full Reminders access. Confirm a task is visible.
+2. Without killing the app, open Settings → Monotasker → Reminders → set to None.
+3. Return to Monotasker.
+- **Expect**: App transitions to the permission instructions screen. No crash, no stale task shown.
+
+**T3 — Return from Reminders.app after editing a task**
+1. Launch Monotasker. Note the task title shown.
+2. Without killing the app, open Reminders.app and change the title of that task.
+3. Return to Monotasker.
+- **Expect**: Card updates to reflect the new title (EKEventStoreChanged fires on foreground return).
+
+**T4 — Return from Reminders.app after deleting the current task**
+1. Launch Monotasker with ≥2 tasks. Note the task shown.
+2. Open Reminders.app and delete that task (not all tasks).
+3. Return to Monotasker.
+- **Expect**: A different task is shown; no alert about "task not found".
+
+**T5 — Return from Reminders.app after deleting the entire list**
+1. Launch Monotasker. Confirm a task is visible.
+2. Open Reminders.app and delete the Monotasker list entirely.
+3. Return to Monotasker.
+- **Expect**: App shows the list picker (`.listSetup` phase). No crash.
+
+**T6 — Undo window survives a brief background**
+1. Launch Monotasker with ≥2 tasks.
+2. Tap Trash on a task — the undo toast appears (4-second window).
+3. Immediately home-screen the app and wait ~1 second, then return.
+4. Observe whether the undo toast is still showing or has committed.
+- **Expect**: If < 4s elapsed (wall clock), undo toast still visible. If ≥ 4s, task is gone and pool reloaded.
+
+**T7 — EKEventStoreChanged fires after iCloud sync**
+1. On Device A, launch Monotasker with a shared iCloud Reminders list.
+2. On Device B (or iCloud web), add a task to the same list.
+3. Wait for sync to propagate, or wait for Device A to receive the notification.
+- **Expect**: Pool reloads within a few seconds; new task appears in re-roll rotation.
+
+---
+
 ## Partial / in progress
 
-- **Errors**: `userMessage` + generic Notice alert works but isn't inline/recoverable everywhere.
+- **Errors**: `userMessage` alert with friendly messages; most unrecoverable errors still OK-only.
 - **Accessibility**: Reduce Motion gated, VoiceOver labels on all controls. Full traversal order audit and large-text layout testing still needed.
 - **Phase transitions**: crossfades implemented; continued polish in the ship-ready pass.
 

@@ -103,6 +103,23 @@ final class AppViewModel {
     await bootstrap()
   }
 
+  /// Called when the app returns to the foreground (scenePhase → .active).
+  /// Handles two cases without triggering a full re-bootstrap for normal foreground returns:
+  /// - Recovery: user was on a permission screen and just granted access from Settings.
+  /// - Revocation: user was using the app and just revoked access from Settings.
+  func sceneDidBecomeActive() async {
+    switch reminders.currentAuthorization() {
+    case .fullAccess:
+      guard phase == .permissionDenied || phase == .onboarding else { return }
+      await bootstrap()
+    case .denied, .writeOnly:
+      guard phase == .focused || phase == .emptyList || phase == .listSetup else { return }
+      phase = .permissionDenied
+    case .undetermined:
+      break
+    }
+  }
+
   func openAppSettings() {
     guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
     UIApplication.shared.open(url)

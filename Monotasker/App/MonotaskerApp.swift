@@ -26,6 +26,11 @@ struct MonotaskerApp: App {
             TelemetryDeckAnalyticsService(appID: AppConfig.telemetryDeckAppID)
           )
         }
+        .onChange(of: scenePhase) { _, newPhase in
+          if newPhase == .active {
+            Task { await viewModel.sceneDidBecomeActive() }
+          }
+        }
     }
   }
 }

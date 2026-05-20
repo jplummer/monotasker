@@ -49,6 +49,8 @@ final class AppViewModelOnboardingTests: XCTestCase {
   }
 
   func testConnectRemindersUndeterminedErrorGoesToPermissionDenied() async {
+    // Permission request throwing an error routes to .permissionDenied.
+    // No userMessage — the permission-denied screen IS the recovery UI.
     let mock = MockRemindersService(authorization: .undetermined)
     mock.setRequestAccessError(MockRemindersService.MockError.generic)
     let store = makeStore()
@@ -60,7 +62,7 @@ final class AppViewModelOnboardingTests: XCTestCase {
     )
     await vm.connectReminders()
     XCTAssertEqual(vm.phase, .permissionDenied)
-    XCTAssertNotNil(vm.userMessage)
+    XCTAssertNil(vm.userMessage)
   }
 
   // MARK: - connectReminders — already decided

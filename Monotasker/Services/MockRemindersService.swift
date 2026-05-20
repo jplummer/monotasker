@@ -17,6 +17,7 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
     /// Controls `requestFullAccess` outcome: nil = grant (default), false = deny, error = throw.
     var requestAccessResult: Bool? = nil
     var requestAccessError: Error? = nil
+    var fetchCallCount: Int = 0
   }
 
   private let lock: OSAllocatedUnfairLock<MutableState>
@@ -124,8 +125,11 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
     }
   }
 
+  var fetchCallCount: Int { lock.withLock { $0.fetchCallCount } }
+
   func fetchIncompleteTopLevel(calendarId: String) async throws -> [ReminderTask] {
     try lock.withLock { state in
+      state.fetchCallCount += 1
       guard let list = state.reminders[calendarId] else {
         throw RemindersServiceError.calendarNotFound
       }
