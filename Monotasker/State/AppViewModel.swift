@@ -167,6 +167,7 @@ final class AppViewModel {
       let summary = try reminders.createReminderList(title: trimmed)
       await applyListChoice(summary)
     } catch {
+      analytics?.record("error.createList")
       userMessage = "I couldn't create that list. Please check that Reminders is working and try again."
     }
   }
@@ -268,6 +269,7 @@ final class AppViewModel {
       analytics?.record("task.add")
       showTaskAddedToastBriefly()
     } catch {
+      analytics?.record("error.addTask")
       userMessage = "I couldn't add that task. Please try again."
     }
   }
@@ -300,6 +302,7 @@ final class AppViewModel {
       // Deleted externally between edit start and save — reload silently.
       await loadPoolAndFocus()
     } catch {
+      analytics?.record("error.saveEdit")
       userMessage = "I couldn't save your changes. Please try again."
     }
   }
@@ -572,7 +575,8 @@ final class AppViewModel {
       }
       await loadPoolAndFocus()
     } catch {
-      userMessage = "I added your task but couldn't reload your list. Shuffle to refresh."
+      analytics?.record("error.poolReloadAfterAdd")
+      // Task was saved successfully — next user action will reload the pool.
     }
   }
 

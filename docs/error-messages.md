@@ -60,6 +60,4 @@ All current messages use `error.localizedDescription` — a raw system error str
 
 **Where**: `AppViewModel.loadPoolAfterAdd(createdId:priorPoolSize:)` — new task was created successfully in EventKit, but fetching the updated pool failed.
 
-**Current**: `error.localizedDescription`
-
-**Suggested**: "I added your task but couldn't reload your list. Shuffle to refresh."
+**Decision**: Swallow silently. The task was saved; any subsequent user action reloads the pool.

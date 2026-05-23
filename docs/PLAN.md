@@ -10,10 +10,10 @@ Links: [README](../README.md)
 
 ### Ship-ready polish
 
-- [ ] **Error UX**: Replace or supplement generic `userMessage` alerts with inline / recoverable messaging where it helps.
+- [x] **Error UX**: Friendly per-situation messages replace `localizedDescription`; alert title removed so message stands alone; load-after-add failure silenced (self-healing) but tracked; all six error sites report to TelemetryDeck.
 - [ ] **Scene lifecycle**: Confirm behavior returning from background / Settings (permission changes, list edits in Reminders). `sceneDidBecomeActive` is wired; see [manual test cases](#scene-lifecycle-manual-tests) below.
 - [x] **Device matrix**: Snapshot tests cover SE / iPhone 13 / 13 Pro Max × light/dark for all four phases (onboarding, permissionDenied, emptyList, focused) including long-content overflow. Remaining device-only concerns (toolbar behavior, sheet detents, keyboard interactions) are covered by scene lifecycle manual tests (T1–T6).
-- [ ] **Full VoiceOver traversal order audit** + large-text layout.
+- [ ] **Full VoiceOver traversal order audit** + large-text layout; see [VoiceOver manual tests](#voiceover-manual-tests) below (V1–V9).
 - [x] **PermissionInstructionsView copy**: iOS grants Reminders access all-or-nothing — there is no user-visible write-only state to distinguish. Current copy ("open Settings and allow Reminders access") is correct.
 
 ### Animations
@@ -108,6 +108,49 @@ These require a physical device (or simulator with real permission flow). Each t
 2. On Device B (or iCloud web), add a task to the same list.
 3. Wait for sync to propagate, or wait for Device A to receive the notification.
 - **Expect**: Pool reloads within a few seconds; new task appears in shuffle rotation.
+
+### VoiceOver manual tests
+
+These require a physical device with VoiceOver enabled (Settings → Accessibility → VoiceOver). Run after any change to view structure, accessibility labels, or hints. Enable VoiceOver before launching the app; use single-finger swipe right/left to move focus, double-tap to activate.
+
+**V1 — Onboarding traversal**
+1. Fresh install (or revoke + relaunch). VoiceOver should land on the card.
+- **Expect**: Focus moves in order: card title/description text → checkbox button ("Connect my Reminders"). No orphaned or unreachable elements. Checkbox hint reads aloud.
+
+**V2 — Permission denied screen**
+1. Deny permission at the onboarding prompt.
+- **Expect**: Focus order: lock icon is hidden from VoiceOver → heading ("Reminders access needed") → body text → "Open Settings" button with hint. No duplicate or inaccessible elements.
+
+**V3 — Focused task screen traversal**
+1. With a task visible, swipe through all elements.
+- **Expect**: Focus order: list picker button (nav bar) → task title → task notes (if present) → complete checkbox (upper-left, "Mark complete") → edit button ("Edit task") → shuffle button ("Shuffle") → trash button ("Trash"). Card tilt does not affect focus order.
+
+**V4 — Complete and trash with undo (2+ tasks)**
+1. With ≥2 tasks, double-tap Complete.
+- **Expect**: Undo toast announced by VoiceOver. Focus moves to toast; "Undo" button is reachable and activatable. Toast dismisses after 4 seconds and focus returns to the new task.
+
+2. Repeat with Trash.
+- **Expect**: Same behavior.
+
+**V5 — Add task**
+1. Double-tap the add button (pencil / below card).
+- **Expect**: Add card appears; focus moves to the title text field automatically. Keyboard accessible. Done/submit action reachable. "Task added." toast announced after save.
+
+**V6 — Inline edit**
+1. With a task visible, double-tap the edit button (pencil, lower-right of card).
+- **Expect**: Title field becomes editable; focus moves into it. Notes field reachable by swiping. Dismiss keyboard to commit; changes reflected on card without losing focus context.
+
+**V7 — List picker**
+1. Double-tap the list picker button in the nav bar.
+- **Expect**: Dropdown opens; each list name is announced with its selection state ("checked" or unchecked). Selecting a list closes the dropdown and announces the new list name or a transition. Scrim dismiss (double-tap outside) reachable.
+
+**V8 — Empty list state**
+1. Switch to a list with no tasks.
+- **Expect**: Empty state message announced. Add task field or button reachable and labeled.
+
+**V9 — Large text with VoiceOver**
+1. Set text size to maximum (Settings → Accessibility → Display & Text Size → Larger Text → drag to max), then enable VoiceOver.
+- **Expect**: All labels readable; no text truncated mid-word without being announced in full by VoiceOver. Card and controls remain tappable (touch targets ≥ 44 pt).
 
 ---
 
