@@ -36,6 +36,7 @@ struct PermissionInstructionsView: View {
               .foregroundStyle(.secondary)
               .multilineTextAlignment(.center)
               .padding(.horizontal, 24)
+              .accessibilityLabel("To use Mono Tasker, open Settings and allow Reminders access")
             Button("Open Settings") {
               model.openAppSettings()
             }

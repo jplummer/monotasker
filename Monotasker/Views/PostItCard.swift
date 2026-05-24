@@ -67,6 +67,9 @@ struct PostItCard: View {
   var checkboxLeadingReserve: CGFloat = 0
   /// Placeholder shown in the title text field when editing and no text has been entered.
   var titlePlaceholder: String = "Title"
+  /// VoiceOver label override for the display-mode notes text. Use when the notes string
+  /// contains "Monotasker", which VoiceOver mispronounces.
+  var displayNotesAccessibilityLabel: String? = nil
   /// Fraction of the container height to shift the card above center. Pass 0 to center vertically.
   var verticalUpShiftRatio: CGFloat = PostItCardLayout.verticalUpShiftRatio
 
@@ -185,6 +188,7 @@ struct PostItCard: View {
               .font(.body)
               .foregroundStyle(.secondary)
               .multilineTextAlignment(.leading)
+              .accessibilityLabel(displayNotesAccessibilityLabel ?? displayNotes)
           }
         }
         .padding(.leading, checkboxLeadingReserve)

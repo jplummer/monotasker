@@ -42,6 +42,7 @@ struct EmptyListView: View {
           colorIndex: 0,
           frontCardRotation: angle,
           titlePlaceholder: "Add a task",
+          displayNotesAccessibilityLabel: "Add a task to your Mono Tasker list",
           verticalUpShiftRatio: cardRatio
         )
 
@@ -128,7 +129,7 @@ struct EmptyListView: View {
     }
     .buttonStyle(.plain)
     .foregroundStyle(.primary)
-    .accessibilityLabel("Reminders list, \(model.activeListSummary?.title ?? AppConfig.appName)")
+    .accessibilityLabel("Reminders list, \(AppConfig.voiceOverName(model.activeListSummary?.title ?? AppConfig.appName))")
     .accessibilityHint("Opens list picker")
   }
 

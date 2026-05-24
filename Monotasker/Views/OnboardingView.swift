@@ -45,6 +45,8 @@ struct OnboardingView: View {
           frontCardRotation: angle,
           checkboxLeadingReserve: 32
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Mono Tasker gives you one task at a time. Check off this task and choose a Reminders list. If you have a Mono Tasker list we'll use it automatically.")
 
         // Completion checkbox — sole CTA.
         // Geometry and styling match TaskFocusView's complete button (toolbarIconButton + checkboxPos).
