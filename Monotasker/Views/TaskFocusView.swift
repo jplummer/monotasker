@@ -162,6 +162,7 @@ struct TaskFocusView: View {
       if isEditing { cancelInlineEdit() }
       if isAdding { cancelInlineAdd() }
       frontCardAngle = Double.random(in: -2.5...2.5)
+      announceCurrentTask()
     }
     .onChange(of: task.title) { _, newTitle in
       if !isEditing {
@@ -177,6 +178,7 @@ struct TaskFocusView: View {
       draftTitle = task.title
       draftNotes = task.notes ?? ""
       frontCardAngle = Double.random(in: -2.5...2.5)
+      announceCurrentTask()
     }
     .alert(
       "That's the only task in your list right now.",
@@ -281,13 +283,7 @@ struct TaskFocusView: View {
   private var bottomIconStrip: some View {
     HStack {
       bottomBarIcon(systemName: "shuffle", accessibilityLabel: "Shuffle") {
-        Task {
-          await model.reroll()
-          if UIAccessibility.isVoiceOverRunning, let task = model.currentTask {
-            let announcement = [task.title, task.notes].compactMap { $0 }.joined(separator: ". ")
-            UIAccessibility.post(notification: .announcement, argument: announcement)
-          }
-        }
+        Task { await model.reroll() }
       }
       Spacer(minLength: 0)
       bottomBarIcon(systemName: "trash", accessibilityLabel: "Trash") {
@@ -330,6 +326,12 @@ struct TaskFocusView: View {
     DispatchQueue.main.async {
       editFocus = .title
     }
+  }
+
+  private func announceCurrentTask() {
+    guard UIAccessibility.isVoiceOverRunning, let task = model.currentTask else { return }
+    let text = [task.title, task.notes].compactMap { $0 }.joined(separator: ". ")
+    UIAccessibility.post(notification: .announcement, argument: text)
   }
 
   private func cancelInlineEdit() {
