@@ -14,14 +14,14 @@ final class ScreenshotTests: XCTestCase {
   }
 
   func testScreenshots() throws {
-    // Wait for bootstrap → focused (MockRemindersService resolves instantly)
-    let taskCard = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Install'")).firstMatch
-    XCTAssertTrue(taskCard.waitForExistence(timeout: 5))
+    // Wait for bootstrap → focused: Trash button appears only in the focused phase
+    let trashButton = app.buttons["Trash"]
+    XCTAssertTrue(trashButton.waitForExistence(timeout: 5))
 
     snapshot("01-TaskFocus")
 
     // Tap trash, wait for undo toast to appear, then let the slide animation finish
-    app.buttons["Trash"].tap()
+    trashButton.tap()
     let undoToast = app.buttons["Task deleted. Undo"]
     XCTAssertTrue(undoToast.waitForExistence(timeout: 3))
     Thread.sleep(forTimeInterval: 0.5)
