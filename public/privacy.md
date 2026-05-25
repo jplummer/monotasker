@@ -4,28 +4,30 @@ title: Privacy Policy – Monotasker
 
 # Privacy Policy
 
-*Effective 2026-05-25*
+*Last updated May 25, 2026*
 
-This Privacy Policy applies to the Monotasker app for iPhone, created by Jon Plummer.
+## The short version
 
-## What the app does with your data
+Monotasker doesn't collect your data. Your tasks stay on your device.
 
-Monotasker reads your Apple Reminders to show you one task at a time. All Reminders data stays on your device and is never transmitted to any server operated by the developer.
+## What the app accesses
 
-The app stores two small values in local device storage (UserDefaults): the identifier of your chosen Reminders list, and the identifier of the last task you were focused on. These values never leave your device.
+Monotasker reads your Apple Reminders so it can show you one task at a time. That data never leaves your device and is never sent to us.
 
-## Crash and error reporting
+The app remembers two things between sessions — which Reminders list you chose, and which task you were last working on. Both are stored locally on your device only.
 
-The app uses [TelemetryDeck](https://telemetrydeck.com) for anonymous error reporting. TelemetryDeck is designed to be privacy-friendly: signals are hashed so they cannot be linked to individual users, and no personally identifiable information is transmitted. See [TelemetryDeck's privacy policy](https://telemetrydeck.com/privacy/) for details.
+## Error reporting
+
+When something goes wrong, the app sends an anonymous signal to [TelemetryDeck](https://telemetrydeck.com) to help us fix bugs. These signals are cryptographically hashed before transmission — they can't be linked back to you or your device. No task content, no Reminders data, and no personally identifiable information is ever included.
 
 ## Children
 
-The app is not directed at children under 13 and does not knowingly collect information from them.
+Monotasker is not directed at children under 13.
 
 ## Changes
 
-This policy may be updated from time to time. Continued use of the app after changes are posted constitutes acceptance of the updated policy.
+If this policy changes, we'll update the date at the top of this page.
 
-## Contact
+## Questions
 
-Questions about privacy? Email [jon@jonplummer.com](mailto:jon@jonplummer.com).
+Email [jon@jonplummer.com](mailto:jon@jonplummer.com).
